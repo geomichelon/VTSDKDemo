@@ -48,6 +48,25 @@ jobs:
             -output dist/VTSDK.xcframework
           (cd dist && zip -r VTSDK.xcframework.zip VTSDK.xcframework)
 
+      - name: Build iOS sample app (simulator, no codesign)
+        run: |
+          set -euxo pipefail
+          xcodebuild \
+            -project ios-demo/VTSDKDemo.xcodeproj \
+            -scheme VTSDKDemo \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath build-output \
+            build
+
+      - name: Upload sample app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VTSDKDemo.app
+          path: build-output/Build/Products/Debug-iphonesimulator/VTSDKDemo.app
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

@@ -25,7 +25,7 @@ jobs:
       - name: Run coverage with threshold
         run: |
           set -euxo pipefail
-          cargo llvm-cov --package vt-sdk-core --fail-under-lines 80 --lcov --output-path lcov.info
+          cargo llvm-cov --package vt-sdk-core --fail-under-lines 90 --lcov --output-path lcov.info
           echo "Coverage OK (>= 80%)."
 
       - name: Upload lcov artifact
@@ -33,4 +33,3 @@ jobs:
         with:
           name: rust-lcov
           path: lcov.info
-
