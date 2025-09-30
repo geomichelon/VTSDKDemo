@@ -68,6 +68,13 @@
             </LinearLayout>
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btnPrepare"
+            android:text="Prepare Sample Images"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,6 +94,70 @@
                 android:layout_height="140dp"
                 android:background="@android:color/darker_gray"
                 android:scaleType="centerCrop" />
+        </LinearLayout>
+
+        <!-- Excluded areas input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Excluded Areas (topLeftX, topLeftY, width, height)" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/editX"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="X" />
+            <EditText
+                android:id="@+id/editY"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="Y" />
+            <EditText
+                android:id="@+id/editW"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="W" />
+            <EditText
+                android:id="@+id/editH"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="H" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            <Button
+                android:id="@+id/btnAddArea"
+                android:text="Add Area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btnClearAreas"
+                android:text="Clear Areas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp" />
+            <TextView
+                android:id="@+id/textAreasCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Excluded: 0"
+                android:layout_marginStart="12dp" />
         </LinearLayout>
 
         <Button
@@ -117,4 +188,3 @@
     </LinearLayout>
 
 </ScrollView>
-
