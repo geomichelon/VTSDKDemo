@@ -8,7 +8,26 @@ This package uses a `binaryTarget` to distribute the Rust-built XCFramework for 
 
 - Use the path-based target in Xcode during development:
   - File → Add Packages… → Add this repository but select “Add Local Package” and point to `dist/VTSDK.xcframework` (Xcode supports local framework references). Alternatively, drag `VTSDK.xcframework` into your project.
-- For production, prefer the binaryTarget URL below managed by CI.
+  - For production, prefer the binaryTarget URL below managed by CI.
+
+Example (path-based binary target in a local Package.swift):
+
+```swift
+// swift-tools-version:5.7
+import PackageDescription
+
+let package = Package(
+  name: "VTSDK-Local",
+  platforms: [.iOS(.v13)],
+  products: [.library(name: "VTSDK", targets: ["VTSDK"])],
+  targets: [
+    .binaryTarget(
+      name: "VTSDK",
+      path: "dist/VTSDK.xcframework" // built locally
+    )
+  ]
+)
+```
 
 2) Binary target (recommended)
 
@@ -30,4 +49,3 @@ Workflow: `.github/workflows/spm-release.yml`
   6. Create a GitHub Release and upload the zip as an asset.
 
 Consumers can then add the package at the tag, and SPM will verify the checksum matches.
-

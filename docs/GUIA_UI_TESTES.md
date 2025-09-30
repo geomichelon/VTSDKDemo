@@ -65,6 +65,10 @@ Two common approaches:
 1) Drive via UI (recommended in this sample): UI tests tap buttons and validate the JSON shown.
 2) Call the FFI directly from the UI tests target (via bridging header) for direct validation.
 
+SPM (recommended for app integration):
+
+- Prefer adding the SDK via Swift Package Manager binary target for your app targets. See docs/SPM.md for details on adding the package by tag and how CI keeps the URL and checksum in sync.
+
 ### Steps (UI-driven)
 
 1. Use the sample project `ios-demo/VTSDKDemo.xcodeproj` and scheme `VTSDKDemo-UI`.

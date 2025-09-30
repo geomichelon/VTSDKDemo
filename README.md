@@ -1,5 +1,12 @@
 # VT-SDK
 
+[![iOS XCFramework](https://github.com/geomichelon/VTSDKDemo/actions/workflows/build-ios-xcframework.yml/badge.svg?branch=main)](https://github.com/geomichelon/VTSDKDemo/actions/workflows/build-ios-xcframework.yml)
+[![Android .so](https://github.com/geomichelon/VTSDKDemo/actions/workflows/build-android-so.yml/badge.svg?branch=main)](https://github.com/geomichelon/VTSDKDemo/actions/workflows/build-android-so.yml)
+[![Android Sample](https://github.com/geomichelon/VTSDKDemo/actions/workflows/build-android-sample.yml/badge.svg?branch=main)](https://github.com/geomichelon/VTSDKDemo/actions/workflows/build-android-sample.yml)
+[![macOS Tests](https://github.com/geomichelon/VTSDKDemo/actions/workflows/macos-tests.yml/badge.svg?branch=main)](https://github.com/geomichelon/VTSDKDemo/actions/workflows/macos-tests.yml)
+[![Coverage (core)](https://github.com/geomichelon/VTSDKDemo/actions/workflows/coverage.yml/badge.svg?branch=main)](https://github.com/geomichelon/VTSDKDemo/actions/workflows/coverage.yml)
+[![SPM](https://img.shields.io/badge/SPM-supported-orange.svg)](docs/SPM.md)
+
 Rust multi-platform SDK for Visual Testing, with FFI bindings for iOS (Swift) and Android (Kotlin/Java).
 
 ---
