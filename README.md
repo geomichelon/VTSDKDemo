@@ -68,7 +68,24 @@ Exposed functions (C ABI), see header `ffi/include/vt_sdk.h`:
 
 Usage rules:
 - Pointers must be valid C strings (NUL-terminated). Always free the returned string with `vt_free_string` after copying it.
-- Retorna `0.0` em caso de ponteiro nulo ou string inválida.
+
+## Recommended Usage
+
+- Baselines and storage
+  - Keep baselines versioned (e.g., by app version/platform/theme/locale) in your repo or a storage bucket.
+  - Resolve a local path for the baseline at test time (copy to tmp if needed).
+- Thresholds and status
+  - Provide `min_similarity` to get a `status` field (`Passed`/`Failed`). Start with 95–99 depending on tolerance, adjust per-screen.
+- Excluded areas
+  - Use `excluded_areas_json` to mask dynamic regions (time, ads, counters) and reduce flaky diffs.
+- Diff output
+  - Read `resultImageRef` to attach the diff to test reports (XCTest attachments, Android Instrumented tests logs/artifacts).
+- CI integration
+  - iOS: build XCFramework in CI and ship to consumers; Android: ship `.so` per ABI.
+  - Run tests + coverage (core has a 90% gate) to keep quality high.
+- Performance
+  - The core normalizes to 256×256 grayscale for a robust/fast metric. For very large inputs, pre-scale images to reduce I/O.
+
 
 ## iOS binding (Swift)
 
@@ -108,17 +125,44 @@ func compareJSON(baseline: String, input: String) -> String {
 
 ## Android binding (Kotlin/Java)
 
-- Load the library and call through a small JNI shim.
-- Example Kotlin API:
+- Load the library and call through a small JNI shim that returns a JSON `String`:
 
 ```kotlin
 object VtSdkFFI {
-    init { System.loadLibrary("vt_sdk_ffi") }
-    external fun vt_compare(baseline: String, input: String, minSimilarity: Int): Float
+    init { System.loadLibrary("vtsdk_shim") }
+    external fun vtCompareImages(
+        baseline: String,
+        input: String,
+        minSim: Int,
+        noise: Int,
+        excludedJson: String,
+        metaJson: String
+    ): String
 }
 ```
 
-Implement a JNI method in C/C++ that converts `jstring` to `const char*` and delegates to `vt_compare_images`, then returns a `jstring` with the JSON.
+Implement a JNI method in C/C++ that converts `jstring` to `const char*` and delegates to `vt_compare_images`, then returns a `jstring` with the JSON (see `android-demo/app/src/main/cpp/vtsdk_jni.cpp`).
+
+---
+
+## Contributing
+
+- Getting started
+  - Install Rust (stable) via `rustup`.
+  - Optional: iOS toolchains (`aarch64-apple-ios`, `aarch64-apple-ios-sim`, `x86_64-apple-ios`) and Android NDK targets if working on FFI builds.
+  - Build + test: `cargo build` and `cargo test`.
+- Code style & quality
+  - Run `cargo fmt` and `cargo clippy` locally; CI runs clippy on save via rust-analyzer (VS Code settings included).
+  - Add tests for changes in `core` — CI enforces >= 90% line coverage (cargo-llvm-cov).
+- PR guidelines
+  - Prefer small, focused PRs with clear descriptions and rationale.
+  - Include tests and docs updates (README or docs/). Keep FFI header changes (`ffi/include/vt_sdk.h`) in sync with Rust.
+  - Ensure CI passes: iOS XCFramework build, Android .so build, coverage, and sample app builds.
+- Reporting issues
+  - Use GitHub Issues with reproducible steps, platform info, and sample images if applicable.
+- Feature requests
+  - Describe the use case and API expectations. We can discuss metrics (SSIM/PSNR), additional outputs (heatmaps), or new bindings.
+
 
 ---
 
