@@ -1,0 +1,37 @@
+name: build-headers
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  headers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build FFI to generate header
+        run: |
+          set -euxo pipefail
+          cargo build -p vt-sdk-ffi --release
+          ls -la ffi/include
+          cp ffi/include/vt_sdk.h dist/ || mkdir -p dist && cp ffi/include/vt_sdk.h dist/
+
+      - name: Upload header artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vt_sdk_headers
+          path: dist/vt_sdk.h
+
