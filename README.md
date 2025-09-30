@@ -1,92 +1,115 @@
 # VT-SDK
 
-SDK multiplataforma em Rust para validação visual (Visual Testing).
-Suporta modo real e modo mockado, com bindings para iOS (Swift) e Android (Kotlin/Java) via FFI.
+Rust multi-platform SDK for Visual Testing, with FFI bindings for iOS (Swift) and Android (Kotlin/Java).
 
 ---
 
-## Guia de Integração (UI Tests)
+## UI Testing Integration Guide
 
-Para instruções passo a passo de como instalar e usar no seu projeto (Xcode/XCUITest e Android/Espresso/Instrumentation), veja:
+Step-by-step instructions for integrating with Xcode/XCUITest and Android Instrumentation/Espresso:
 
-- `docs/GUIA_UI_TESTES.md`
+- docs/GUIA_UI_TESTES.md
 
 ---
 
-## Estrutura
+## Workspace Layout
 
-- Workspace: `Cargo.toml` (raiz) declara `core`, `mock` e `ffi`.
-- Core: `core/` contém a implementação real (ex.: `compare`).
-- Mock: `mock/` contém a implementação mock para testes/integração.
-- FFI: `ffi/` expõe a API C (`vt_compare`) como biblioteca compartilhada e estática.
+- Workspace: root `Cargo.toml` declares `core`, `mock`, and `ffi` members.
+- Core: `core/` contains the real implementation (e.g., compare).
+- Mock: `mock/` contains a mock implementation for integration/testing.
+- FFI: `ffi/` exposes a C ABI and builds static/shared libraries.
 
-## Features/Modos
+## Features/Modes
 
-- `real` (padrão): usa `vt-sdk-core`.
-- `mock`: usa `vt-sdk-mock`.
-- São exclusivos entre si; pelo menos um deve estar ativo (o default ativa `real`).
+- `real` (default): uses `vt-sdk-core`.
+- `mock`: uses `vt-sdk-mock`.
+- Mutually exclusive; at least one must be enabled (default enables `real`).
 
-## Build Desktop
+## Desktop Build
 
 - Real: `cargo build -p vt-sdk-ffi --release`
 - Mock: `cargo build -p vt-sdk-ffi --release --no-default-features --features mock`
 
-Saídas típicas (macOS/Linux):
-- `target/release/libvt_sdk_ffi.dylib` ou `.so` (dinâmica)
-- `target/release/libvt_sdk_ffi.a` (estática)
+Typical outputs (macOS/Linux):
+- `target/release/libvt_sdk_ffi.dylib` or `.so` (dynamic)
+- `target/release/libvt_sdk_ffi.a` (static)
 
 ## Android
 
-1) Configure o NDK/toolchains e targets desejados (ex.: `aarch64-linux-android`, `armv7-linux-androideabi`, `x86_64-linux-android`).
-2) Compile a FFI (real):
+1) Install Android NDK/toolchains and desired targets (`aarch64-linux-android`, `armv7-linux-androideabi`, `x86_64-linux-android`).
+2) Build FFI (real):
    - `cargo build -p vt-sdk-ffi --release --target aarch64-linux-android`
-3) Para mock: adicione `--no-default-features --features mock`.
-4) Linke `libvt_sdk_ffi.so` no app e carregue com `System.loadLibrary("vt_sdk_ffi")`.
+3) For mock: add `--no-default-features --features mock`.
+4) Link `libvt_sdk_ffi.so` into the app and load via `System.loadLibrary("vt_sdk_ffi")`.
 
 ## iOS
 
-O crate `ffi` agora gera `staticlib` e `cdylib` (ver `ffi/Cargo.toml`). Para iOS, use a estática (`.a`). Targets comuns:
+The `ffi` crate builds `staticlib` and `cdylib`. For iOS, use the static (`.a`). Common targets:
 
-- Dispositivo: `aarch64-apple-ios`
-- Simulador: `aarch64-apple-ios-sim` (ou `x86_64-apple-ios` para simuladores Intel)
+- Device: `aarch64-apple-ios`
+- Simulator: `aarch64-apple-ios-sim` and `x86_64-apple-ios` (Intel simulators)
 
-Comandos exemplo (ajuste conforme seu toolchain):
+Example (adjust to your toolchain):
 
-- `rustup target add aarch64-apple-ios aarch64-apple-ios-sim`
+- `rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios`
 - Real: `cargo build -p vt-sdk-ffi --release --target aarch64-apple-ios`
 - Mock: `cargo build -p vt-sdk-ffi --release --no-default-features --features mock --target aarch64-apple-ios`
 
-Para distribuir universal/xcframework, combine artefatos de device + simulator.
+To produce an XCFramework, combine device + simulator outputs.
 
-## API FFI
+## FFI API
 
-Assinatura exposta (C ABI):
+Exposed functions (C ABI), see header `ffi/include/vt_sdk.h`:
 
-- `float vt_compare(const char* baseline, const char* input, int32_t min_similarity);`
+- `const char* vt_compare_images(const char* baseline_url, const char* input_url, int32_t min_similarity, int32_t noise_filter, const char* excluded_areas_json, const char* meta_json);`
+- `const char* vt_flex_search(const char* parent_url, const char* child_url, const char* meta_json);`
+- `const char* vt_flex_locate(const char* container_url, const char* main_url, const char* relative_url, const char* meta_json);`
+- `void vt_free_string(const char* ptr);` (free strings returned by the functions)
 
-Regras de uso:
-- `baseline` e `input` devem ser strings C válidas e terminadas em `\0`.
+Usage rules:
+- Pointers must be valid C strings (NUL-terminated). Always free the returned string with `vt_free_string` after copying it.
 - Retorna `0.0` em caso de ponteiro nulo ou string inválida.
 
-## Binding iOS (Swift)
+## iOS binding (Swift)
 
-- Linke a lib estática `libvt_sdk_ffi.a` no projeto e exponha o símbolo:
+- Link the static library (prefer via XCFramework) and include the header `vt_sdk.h` in a bridging header.
 
 ```swift
-@_silgen_name("vt_compare")
-func vt_compare(_ baseline: UnsafePointer<CChar>!, _ input: UnsafePointer<CChar>!, _ minSimilarity: Int32) -> Float
+@_silgen_name("vt_compare_images")
+func vt_compare_images(
+  _ baseline: UnsafePointer<CChar>!,
+  _ input: UnsafePointer<CChar>!,
+  _ minSimilarity: Int32,
+  _ noiseFilter: Int32,
+  _ excludedAreasJson: UnsafePointer<CChar>!,
+  _ metaJson: UnsafePointer<CChar>!
+) -> UnsafePointer<CChar>!
 
-func compare(baseline: String, input: String, min: Int32) -> Float {
-    let b = (baseline as NSString).utf8String!
-    let i = (input as NSString).utf8String!
-    return vt_compare(b, i, min)
+@_silgen_name("vt_free_string")
+func vt_free_string(_ ptr: UnsafePointer<CChar>!)
+
+func compareJSON(baseline: String, input: String) -> String {
+  var out = "{}"
+  baseline.withCString { b in
+    input.withCString { i in
+      "[]".withCString { ex in
+        "{}".withCString { me in
+          if let res = vt_compare_images(b, i, 95, 20, ex, me) {
+            out = String(cString: res)
+            vt_free_string(res)
+          }
+        }
+      }
+    }
+  }
+  return out
 }
 ```
 
-## Binding Android (Kotlin/Java)
+## Android binding (Kotlin/Java)
 
-- Carregue a lib e use um wrapper JNI que chama `vt_compare`.
-- Exemplo de assinatura em Kotlin:
+- Load the library and call through a small JNI shim.
+- Example Kotlin API:
 
 ```kotlin
 object VtSdkFFI {
@@ -95,12 +118,12 @@ object VtSdkFFI {
 }
 ```
 
-Implemente o `JNIEXPORT jfloat JNICALL Java_pkg_VtSdkFFI_vt_1compare(...)` em C/C++, convertendo `jstring` para `const char*` e delegando para `vt_compare`.
+Implement a JNI method in C/C++ that converts `jstring` to `const char*` and delegates to `vt_compare_images`, then returns a `jstring` with the JSON.
 
 ---
 
-## Notas
+## Notes
 
-- iOS: apps em produção preferem estática; evitar `.dylib` custom em iOS.
-- Sem rede, extensões de IDE não sugerem nomes/versões de crates; apenas chaves/estrutura TOML.
-- A função real em `core` é stub e retorna valor fixo; ajuste conforme a lógica de Visual Testing.
+- iOS: production apps usually link static libraries; avoid custom `.dylib` on iOS.
+- If offline, IDE extensions might not suggest crate versions; stick to structure/keys.
+- The core now implements pixel-wise similarity (not a stub); further metrics (SSIM/PSNR) can be added as needed.

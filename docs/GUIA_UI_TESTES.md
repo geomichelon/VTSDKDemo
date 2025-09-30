@@ -1,43 +1,47 @@
-# Guia: Instalação e Uso em UI Tests (iOS e Android)
+# Guide: Installing and Using in UI Tests (iOS and Android)
 
-Este guia explica como gerar as bibliotecas do SDK (Rust FFI) e integrá‑las em projetos iOS (Xcode/XCUITest) e Android (Instrumented/Espresso), com exemplos práticos de chamada.
+This guide explains how to build the SDK libraries (Rust FFI) and integrate them into iOS (Xcode/XCUITest) and Android (Instrumentation/Espresso) projects, with practical examples.
 
-## Visão geral
+## Overview
 
-- Artefatos gerados pelo crate `ffi`:
-  - iOS: `staticlib` (recomendado) → `libvt_sdk_ffi.a`, empacotado como `dist/VTSDK.xcframework`.
-  - Android: `cdylib` → `.so` por ABI (`arm64-v8a`, `armeabi-v7a`, `x86_64`).
-- Header C público: `ffi/include/vt_sdk.h`.
-- Funções expostas (retornam JSON `const char*` que deve ser liberado com `vt_free_string`):
+- Artifacts produced by the `ffi` crate:
+  - iOS: static library (`libvt_sdk_ffi.a`) packaged as `dist/VTSDK.xcframework`.
+  - Android: shared libraries (`.so`) per ABI (`arm64-v8a`, `armeabi-v7a`, `x86_64`).
+- Public C header: `ffi/include/vt_sdk.h`.
+- Exposed functions return JSON as `const char*`; free with `vt_free_string`:
   - `vt_compare_images(...)`
   - `vt_flex_search(...)`
   - `vt_flex_locate(...)`
 
-## Gerando os binários
+## Building the binaries
 
-Pré‑requisitos: `rustup`, toolchains iOS/Android, Xcode (para iOS) e Android NDK (para Android).
+Prereqs: `rustup`, iOS/Android toolchains, Xcode (iOS) and Android NDK (Android).
 
-### iOS (device + simulador)
+### iOS (device + simulator)
 
 ```bash
-rustup target add aarch64-apple-ios aarch64-apple-ios-sim
+rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
 cargo build -p vt-sdk-ffi --release --target aarch64-apple-ios
 cargo build -p vt-sdk-ffi --release --target aarch64-apple-ios-sim
-# Opcional: empacotar em XCFramework
+cargo build -p vt-sdk-ffi --release --target x86_64-apple-ios
+# Package XCFramework (device + simulator fat lib)
+lipo -create -output dist/libvt_sdk_ffi_sim.a \
+  target/aarch64-apple-ios-sim/release/libvt_sdk_ffi.a \
+  target/x86_64-apple-ios/release/libvt_sdk_ffi.a
 xcodebuild -create-xcframework \
   -library target/aarch64-apple-ios/release/libvt_sdk_ffi.a -headers ffi/include \
-  -library target/aarch64-apple-ios-sim/release/libvt_sdk_ffi.a -headers ffi/include \
+  -library dist/libvt_sdk_ffi_sim.a -headers ffi/include \
   -output dist/VTSDK.xcframework
 ```
 
-Arquivos resultantes:
+Outputs:
 
 - `dist/VTSDK.xcframework`
 - `ffi/include/vt_sdk.h`
 
-### Android (várias ABIs)
+### Android (multiple ABIs)
 
-Defina o caminho do NDK (ex.: `~/Library/Android/sdk/ndk/25.2.9519653`) em `ANDROID_NDK_HOME`.
+Set NDK path (e.g., `~/Library/Android/sdk/ndk/25.2.9519653`) in `ANDROID_NDK_HOME`.
 
 ```bash
 rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
@@ -46,58 +50,51 @@ cargo build -p vt-sdk-ffi --release --target armv7-linux-androideabi # armeabi-v
 cargo build -p vt-sdk-ffi --release --target x86_64-linux-android    # x86_64
 ```
 
-Arquivos resultantes:
+Outputs:
 
 - `target/<triple>/release/libvt_sdk_ffi.so`
 
-Observação (modo mock): adicione `--no-default-features --features mock` para gerar bibliotecas de mock.
+Note (mock mode): add `--no-default-features --features mock` to build mock libraries.
 
 ---
 
-## Integração no iOS (Xcode + XCUITest)
+## iOS integration (Xcode + XCUITest)
 
-Há duas formas comuns:
+Two common approaches:
 
-1) Interagir via UI (recomendado para este sample): a UI Test abre o app, toca botões e valida o JSON exibido.
-2) Invocar o FFI diretamente no target de UI Tests (via bridging header) — útil para validações diretas.
+1) Drive via UI (recommended in this sample): UI tests tap buttons and validate the JSON shown.
+2) Call the FFI directly from the UI tests target (via bridging header) for direct validation.
 
-Este guia mostra a opção 2 (direta em UI Tests). Adapte conforme sua arquitetura.
+### Steps (UI-driven)
 
-### Passo a passo (via UI)
+1. Use the sample project `ios-demo/VTSDKDemo.xcodeproj` and scheme `VTSDKDemo-UI`.
+2. Add a UI Testing target if needed: Xcode → File → New → Target… → iOS → UI Testing Bundle → `VTSDKDemoUITests`.
+3. Add `ios-demo/VTSDKDemoUITests/VTSDKDemoUITests.swift` to the test target.
+4. Select a simulator and run the `VTSDKDemo-UI` scheme on the UI Tests destination.
 
-1. Use o sample pronto: projeto `ios-demo/VTSDKDemo.xcodeproj` e scheme `VTSDKDemo-UI`.
-2. Adicione um target de UI Tests (se ainda não existir): Xcode → File → New → Target… → iOS → UI Testing Bundle → nome `VTSDKDemoUITests`.
-3. Adicione o arquivo do teste de exemplo em `ios-demo/VTSDKDemoUITests/VTSDKDemoUITests.swift` ao target criado.
-4. Selecione um simulador e rode a scheme `VTSDKDemo-UI` com o destino de UI Tests.
-
-O teste abre o app, toca “Preparar imagens de exemplo” e “vt_compare_images”, e espera até que o JSON exibido contenha `obtainedSimilarity`.
-
-Notas:
-
-- O SDK retorna JSON (status, obtainedSimilarity, etc.). Faça o parse e valide conforme seu critério.
-- Para distribuição, prefira usar o `XCFramework` no app; testes podem apenas exercitar a API.
+The test opens the app, taps “Prepare sample images” and “vt_compare_images”, and waits until the JSON shows `obtainedSimilarity`.
 
 ---
 
-## Integração no Android (Instrumented/Espresso)
+## Android integration (Instrumentation/Espresso)
 
-Como a API é C, você chama via JNI. A forma mais simples é criar um pequeno “shim” JNI em C/C++ que delega para `vt_compare_images` e converte strings.
+The API is C-based; call it via JNI. A simple approach is a thin JNI shim in C/C++ delegating to `vt_compare_images`.
 
-### Passo a passo
+### Steps
 
-1. Copie os `.so` gerados para o app:
+1. Copy the generated `.so` files into your app:
    - `app/src/main/jniLibs/arm64-v8a/libvt_sdk_ffi.so`
    - `app/src/main/jniLibs/armeabi-v7a/libvt_sdk_ffi.so`
    - `app/src/main/jniLibs/x86_64/libvt_sdk_ffi.so`
 
-2. Adicione o header ao projeto (opcional, para referência): copie `ffi/include/vt_sdk.h` para `app/src/main/cpp/include/`.
+2. Optionally add the header for reference: copy `ffi/include/vt_sdk.h` to `app/src/main/cpp/include/`.
 
-3. Crie um shim JNI (ex.: `app/src/main/cpp/vtsdk_jni.cpp`):
+3. Create a JNI shim (e.g., `app/src/main/cpp/vtsdk_jni.cpp`):
 
 ```cpp
 #include <jni.h>
 #include <string>
-#include "vt_sdk.h" // ajustar includePath no CMake
+#include "vt_sdk.h" // adjust includePath in CMake
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_vtsdk_VtSdkFFI_vtCompareImages(
@@ -122,33 +119,17 @@ Java_com_example_vtsdk_VtSdkFFI_vtCompareImages(
 }
 ```
 
-4. Configure o `CMakeLists.txt` para compilar o shim e linkar com `vt_sdk_ffi`:
-
-```cmake
-cmake_minimum_required(VERSION 3.18)
-project(vtsdk_shim LANGUAGES C CXX)
-
-add_library(vtsdk_shim SHARED src/main/cpp/vtsdk_jni.cpp)
-target_include_directories(vtsdk_shim PRIVATE src/main/cpp/include)
-
-# Link dinâmico com a .so do Rust (já empacotada em jniLibs)
-add_library(vt_sdk_ffi SHARED IMPORTED)
-set_target_properties(vt_sdk_ffi PROPERTIES IMPORTED_NO_SONAME TRUE)
-
-target_link_libraries(vtsdk_shim PRIVATE vt_sdk_ffi log)
-```
-
-5. Ative o CMake no `build.gradle` do módulo `app`:
+4. Enable CMake in `app/build.gradle`:
 
 ```groovy
 android {
   defaultConfig { externalNativeBuild { cmake { cppFlags "-std=c++17" } } }
   externalNativeBuild { cmake { path file("CMakeLists.txt") } }
-  // Certifique-se de embutir as .so de jniLibs por ABI
+  // Ensure jniLibs ABI directories are packaged
 }
 ```
 
-6. Exponha uma API Kotlin para os testes:
+5. Expose a Kotlin API for tests:
 
 ```kotlin
 package com.example.vtsdk
@@ -166,7 +147,7 @@ object VtSdkFFI {
 }
 ```
 
-7. Use nos Instrumented Tests (Espresso):
+6. Use it in Instrumented Tests (Espresso):
 
 ```kotlin
 @RunWith(AndroidJUnit4::class)
@@ -179,20 +160,20 @@ class UiTests {
 }
 ```
 
-Notas:
+Notes:
 
-- O shim JNI compila para cada ABI e delega a chamada para a `.so` do Rust, já empacotada em `jniLibs`.
-- Se preferir, você pode compilar o shim como parte do próprio app (sem módulo separado).
+- The JNI shim builds per-ABI and delegates to the Rust `.so`, packaged in `jniLibs`.
+- You may also compile the shim as part of the app module.
 
 ---
 
-## Modo real vs. mock
+## Real vs. mock mode
 
-- `real` (padrão): usa a implementação de `core`.
-- `mock`: usa respostas simuladas e é útil para integrar pipeline e UI antes da lógica real.
-- Para iOS/Android, gere as libs com o conjunto de features desejado.
+- `real` (default): uses the `core` implementation.
+- `mock`: returns simulated responses; useful to integrate pipeline/UI before real logic.
+- Build iOS/Android libraries with the desired features.
 
-Exemplos:
+Examples:
 
 ```bash
 # iOS mock
@@ -204,21 +185,20 @@ cargo build -p vt-sdk-ffi --release --no-default-features --features mock --targ
 
 ---
 
-## Boas práticas e troubleshooting
+## Best practices and troubleshooting
 
-- Sempre libere strings retornadas pelo SDK com `vt_free_string` após copiá‑las (
-  iOS: depois de `String(cString:)`; Android: após criar o `jstring`).
-- Confirme caminhos de imagens/URLs usados nos testes (acessíveis no sandbox do app/teste).
-- Xcode Preview requer esquema em `Debug` (otimização `-Onone`).
-- Em Android, garanta que os ABIs do app/test combinam com os `.so` incluídos.
-- Problemas de link no iOS: verifique se o `XCFramework` está em “Link Binary With Libraries” do target correto e que o Header Search Path inclui `ffi/include`.
-- Problemas de `UnsatisfiedLinkError` no Android: confirme `System.loadLibrary("vtsdk_shim")` e que as `.so` estão em `jniLibs/<ABI>/`.
+- Always free strings returned by the SDK with `vt_free_string` after copying.
+- Ensure images/URLs used in tests are accessible from the app/test sandbox.
+- Xcode Preview requires Debug scheme (`-Onone`).
+- On Android, make sure app/test ABIs match included `.so` files.
+- iOS linking issues: ensure XCFramework is in “Link Binary With Libraries” for the correct target and Header Search Paths include `ffi/include`.
+- Android `UnsatisfiedLinkError`: verify `System.loadLibrary("vtsdk_shim")` and `.so` presence in `jniLibs/<ABI>/`.
 
 ---
 
-## Onde olhar no repositório
+## Where to look in this repo
 
-- Header C: `ffi/include/vt_sdk.h`
-- XCFramework (exemplo gerado): `dist/VTSDK.xcframework`
-- Demo iOS pronta: `ios-demo/VTSDKDemo.xcodeproj`
-- UI Tests (exemplo): `ios-demo/VTSDKDemoUITests/VTSDKDemoUITests.swift`
+- C header: `ffi/include/vt_sdk.h`
+- Example XCFramework: `dist/VTSDK.xcframework`
+- iOS sample app: `ios-demo/VTSDKDemo.xcodeproj`
+- UI Tests example: `ios-demo/VTSDKDemoUITests/VTSDKDemoUITests.swift`

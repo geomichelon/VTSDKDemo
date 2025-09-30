@@ -1,36 +1,36 @@
 # iOS Demo
 
-Projeto SwiftUI de exemplo que consome o SDK via FFI usando o `VTSDK.xcframework` gerado em `dist/` e o header `ffi/include/vt_sdk.h`.
+SwiftUI sample app that consumes the SDK via FFI using the `VTSDK.xcframework` in `dist/` and the header `ffi/include/vt_sdk.h`.
 
-## Como abrir e rodar
+## How to open and run
 
-1) Gere o XCFramework (já fizemos): `dist/VTSDK.xcframework`.
-2) Abra `ios-demo/VTSDKDemo.xcodeproj` no Xcode.
-3) No target `VTSDKDemo`, ajuste o `Team` em Signing & Capabilities.
-4) Selecione um simulador ou dispositivo e rode.
+1) Generate the XCFramework: `dist/VTSDK.xcframework`.
+2) Open `ios-demo/VTSDKDemo.xcodeproj` in Xcode.
+3) Select your `Team` under the `VTSDKDemo` target (Signing & Capabilities).
+4) Select a simulator or device and build/run.
 
-O botão "Run FFI" chama `vt_compare_images` e mostra o JSON retornado.
+The "Run FFI" button calls `vt_compare_images` and shows the returned JSON.
 
-Exemplos incluídos
-- O app gera imagens de exemplo no diretório temporário e executa:
+Included examples
+- The app generates sample images under the temporary directory and executes:
   - `vt_compare_images` (baseline vs. input)
-  - `vt_flex_search` (child dentro de parent)
-  - `vt_flex_locate` (main e relative dentro de container)
-  Os JSONs são exibidos formatados na tela.
+  - `vt_flex_search` (child within parent)
+  - `vt_flex_locate` (main and relative within container)
+  The JSON responses are rendered in a formatted view.
 
-Visualização e comparação
-- É possível escolher duas imagens da Fototeca (botões “Escolher Baseline” e “Escolher Input”).
-- As imagens são mostradas lado a lado; toque “Comparar selecionadas” para rodar `vt_compare_images` com esses arquivos.
-- A similaridade retornada aparece no JSON abaixo.
+Visualization and comparison
+- You can pick two images from the Photo Library (buttons “Choose Baseline” and “Choose Input”).
+- Images are shown side-by-side; tap “Compare selected” to run `vt_compare_images` with those files.
+- The returned similarity is highlighted and the full JSON is shown below.
 
-## UI Tests (modelo)
+## UI Tests (template)
 
-- Scheme extra de testes: `ios-demo/VTSDKDemo.xcodeproj/xcshareddata/xcschemes/VTSDKDemo-UI.xcscheme` (Debug)
-- Adicione um target iOS UI Testing no Xcode chamado `VTSDKDemoUITests` e inclua o arquivo `ios-demo/VTSDKDemoUITests/VTSDKDemoUITests.swift`.
-- Rode os testes com a scheme `VTSDKDemo-UI`; o teste toca a UI do sample e valida o JSON mostrado.
+- Extra test scheme: `ios-demo/VTSDKDemo.xcodeproj/xcshareddata/xcschemes/VTSDKDemo-UI.xcscheme` (Debug)
+- Add an iOS UI Testing target named `VTSDKDemoUITests` and include `ios-demo/VTSDKDemoUITests/VTSDKDemoUITests.swift`.
+- Run the tests using the `VTSDKDemo-UI` scheme; the test drives the sample UI and validates the JSON output.
 
-Estrutura principal:
-- Projeto: `ios-demo/VTSDKDemo.xcodeproj`
-- Código fonte: `ios-demo/VTSDKDemo/`
+Main structure:
+- Project: `ios-demo/VTSDKDemo.xcodeproj`
+- Sources: `ios-demo/VTSDKDemo/`
 - Bridging header: `ios-demo/VTSDKDemo/VTSDKDemo-Bridging-Header.h`
 - Assets: `ios-demo/VTSDKDemo/Assets.xcassets`
