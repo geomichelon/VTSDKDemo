@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.store/schemas/json/vscode/tasks.json",
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "cargo: check (workspace)",
+      "type": "shell",
+      "command": "cargo check",
+      "problemMatcher": ["$rustc"],
+      "group": "build"
+    },
+    {
+      "label": "cargo: clippy (all features)",
+      "type": "shell",
+      "command": "cargo clippy --all-targets --all-features",
+      "problemMatcher": ["$rustc"]
+    },
+    {
+      "label": "cargo: build ffi (real)",
+      "type": "shell",
+      "command": "cargo build -p vt-sdk-ffi",
+      "problemMatcher": ["$rustc"],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "cargo: build ffi (mock)",
+      "type": "shell",
+      "command": "cargo build -p vt-sdk-ffi --no-default-features --features mock",
+      "problemMatcher": ["$rustc"],
+      "group": "build"
+    },
+    {
+      "label": "cargo: test (workspace)",
+      "type": "shell",
+      "command": "cargo test",
+      "problemMatcher": ["$rustc"],
+      "group": "test"
+    },
+    {
+      "label": "cargo: clean",
+      "type": "shell",
+      "command": "cargo clean"
+    }
+  ]
+}
+

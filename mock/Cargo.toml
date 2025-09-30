@@ -1,0 +1,9 @@
+[package]
+name = "vt-sdk-mock"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "vt_sdk_mock"
+path = "src/lib.rs"
+

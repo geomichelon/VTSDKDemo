@@ -1,0 +1,40 @@
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Rust
+/target/
+Cargo.lock
+
+# Build artifacts we generate locally
+/dist/
+
+# Xcode / iOS
+DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+ios-demo/VTSDKDemo.xcodeproj/xcuserdata/
+ios-demo/VTSDKDemo.xcodeproj/project.xcworkspace/xcuserdata/
+
+# SwiftPM (if used)
+.swiftpm/
+
+# Android (if used)
+*.iml
+.gradle/
+.idea/
+local.properties
+**/build/
+.cxx/
+*.keystore
+
+# VSCode (keep settings.json tracked)
+!.vscode/

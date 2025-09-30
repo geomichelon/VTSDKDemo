@@ -1,0 +1,368 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		616161616161616161616161 /* VTSDKDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101010101010101010101010 /* VTSDKDemoApp.swift */; };
+		626262626262626262626262 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202020202020202020202020 /* ContentView.swift */; };
+		636363636363636363636363 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 404040404040404040404040 /* Assets.xcassets */; };
+		E0E0E0E0E0E0E0E0E0E0E0E0 /* VTSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0F0F0F0F0F0F0F0F0F0F0F0 /* VTSDK.xcframework */; };
+		717171717171717171717171 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 707070707070707070707070 /* PhotoPickerView.swift */; };
+        ABABABABABABABABABABABAB /* VTSDKDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCDCDCDCDCDCDCDCDCDCDCD /* VTSDKDemoUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		101010101010101010101010 /* VTSDKDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTSDKDemoApp.swift; sourceTree = "<group>"; };
+		202020202020202020202020 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		232323232323232323232323 /* VTSDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VTSDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		303030303030303030303030 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		404040404040404040404040 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		505050505050505050505050 /* VTSDKDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VTSDKDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		F0F0F0F0F0F0F0F0F0F0F0F0 /* VTSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = VTSDK.xcframework; path = ../dist/VTSDK.xcframework; sourceTree = "<group>"; };
+		707070707070707070707070 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
+        BEBEBEBEBEBEBEBEBEBEBEBE /* VTSDKDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VTSDKDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+        CDCDCDCDCDCDCDCDCDCDCDCD /* VTSDKDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTSDKDemoUITests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		444444444444444444444444 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E0E0E0E0E0E0E0E0E0E0E0E0 /* VTSDK.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+        FBFBFBFBFBFBFBFBFBFBFBFB /* Frameworks */ = {
+            isa = PBXFrameworksBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		111111111111111111111111 = {
+			isa = PBXGroup;
+			children = (
+				121212121212121212121212 /* VTSDKDemo */,
+                343434343434343434343434 /* VTSDKDemoUITests */,
+				F0F0F0F0F0F0F0F0F0F0F0F0 /* VTSDK.xcframework */,
+				222222222222222222222222 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		121212121212121212121212 /* VTSDKDemo */ = {
+			isa = PBXGroup;
+			children = (
+				101010101010101010101010 /* VTSDKDemoApp.swift */,
+				202020202020202020202020 /* ContentView.swift */,
+				707070707070707070707070 /* PhotoPickerView.swift */,
+				404040404040404040404040 /* Assets.xcassets */,
+				505050505050505050505050 /* VTSDKDemo-Bridging-Header.h */,
+				303030303030303030303030 /* Info.plist */,
+			);
+			path = VTSDKDemo;
+			sourceTree = "<group>";
+		};
+		222222222222222222222222 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				232323232323232323232323 /* VTSDKDemo.app */,
+                BEBEBEBEBEBEBEBEBEBEBEBE /* VTSDKDemoUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+        343434343434343434343434 /* VTSDKDemoUITests */ = {
+            isa = PBXGroup;
+            children = (
+                CDCDCDCDCDCDCDCDCDCDCDCD /* VTSDKDemoUITests.swift */,
+            );
+            path = VTSDKDemoUITests;
+            sourceTree = "<group>";
+        };
+/* End PBXGroup section */
+
+/* Begin PBXContainerItemProxy section */
+        EFEFEFEFEFEFEFEFEFEFEFEF /* PBXContainerItemProxy */ = {
+            isa = PBXContainerItemProxy;
+            containerPortal = 1E1C9A1A2B3C4D5E6F708090 /* Project object */;
+            proxyType = 1;
+            remoteGlobalIDString = AABBCCDD0011223344556677;
+            remoteInfo = VTSDKDemo;
+        };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXNativeTarget section */
+		AABBCCDD0011223344556677 /* VTSDKDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 777777777777777777777777 /* Build configuration list for PBXNativeTarget "VTSDKDemo" */;
+			buildPhases = (
+				333333333333333333333333 /* Sources */,
+				444444444444444444444444 /* Frameworks */,
+				555555555555555555555555 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VTSDKDemo;
+			productName = VTSDKDemo;
+			productReference = 232323232323232323232323 /* VTSDKDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+        DEDEDEDEDEDEDEDEDEDEDEDE /* VTSDKDemoUITests */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = DDDDDDDDDDDDDDDDDDDDDDDD /* Build configuration list for PBXNativeTarget "VTSDKDemoUITests" */;
+            buildPhases = (
+                CACACACACACACACACACACACA /* Sources */,
+                FBFBFBFBFBFBFBFBFBFBFBFB /* Frameworks */,
+            );
+            buildRules = (
+            );
+            dependencies = (
+                CFCFCFCFCFCFCFCFCFCFCFCF /* PBXTargetDependency */,
+            );
+            name = VTSDKDemoUITests;
+            productName = VTSDKDemoUITests;
+            productReference = BEBEBEBEBEBEBEBEBEBEBEBE /* VTSDKDemoUITests.xctest */;
+            productType = "com.apple.product-type.bundle.ui-testing";
+        };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1E1C9A1A2B3C4D5E6F708090 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				ORGANIZATIONNAME = VT;
+				TargetAttributes = {
+					AABBCCDD0011223344556677 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+                    DEDEDEDEDEDEDEDEDEDEDEDE = {
+                        CreatedOnToolsVersion = 14.3;
+                        TestTargetID = AABBCCDD0011223344556677;
+                    };
+				};
+			};
+			buildConfigurationList = 666666666666666666666666 /* Build configuration list for PBXProject "VTSDKDemo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 111111111111111111111111;
+			productRefGroup = 222222222222222222222222 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AABBCCDD0011223344556677 /* VTSDKDemo */,
+                DEDEDEDEDEDEDEDEDEDEDEDE /* VTSDKDemoUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		555555555555555555555555 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				636363636363636363636363 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		333333333333333333333333 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				616161616161616161616161 /* VTSDKDemoApp.swift in Sources */,
+				626262626262626262626262 /* ContentView.swift in Sources */,
+				717171717171717171717171 /* PhotoPickerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+        CACACACACACACACACACACACA /* Sources */ = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                ABABABABABABABABABABABAB /* VTSDKDemoUITests.swift in Sources */,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+        CFCFCFCFCFCFCFCFCFCFCFCF /* PBXTargetDependency */ = {
+            isa = PBXTargetDependency;
+            target = AABBCCDD0011223344556677 /* VTSDKDemo */;
+            targetProxy = EFEFEFEFEFEFEFEFEFEFEFEF /* PBXContainerItemProxy */;
+        };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		000011112222333344445555 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FTEQK3TWGX;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../ffi/include";
+				INFOPLIST_FILE = VTSDKDemo/Info.plist;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.VTSDKDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "VTSDKDemo/VTSDKDemo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		888888888888888888888888 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				ENABLE_BITCODE = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+			};
+			name = Debug;
+		};
+		999999999999999999999999 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		AAAABBBBCCCCDDDDEEEEFFFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FTEQK3TWGX;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../ffi/include";
+				INFOPLIST_FILE = VTSDKDemo/Info.plist;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.VTSDKDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "VTSDKDemo/VTSDKDemo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+        EEEEEEEEEEEEEEEEEEEEEEEE /* Debug */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_TEAM = FTEQK3TWGX;
+                GENERATE_INFOPLIST_FILE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+                LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @executable_path/Frameworks";
+                PRODUCT_BUNDLE_IDENTIFIER = com.example.VTSDKDemoUITests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+                TEST_TARGET_NAME = VTSDKDemo;
+            };
+            name = Debug;
+        };
+        FFFFFFFFFFFFFFFFFFFFFFFF /* Release */ = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                DEVELOPMENT_TEAM = FTEQK3TWGX;
+                GENERATE_INFOPLIST_FILE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+                LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @executable_path/Frameworks";
+                PRODUCT_BUNDLE_IDENTIFIER = com.example.VTSDKDemoUITests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = "1,2";
+                TEST_TARGET_NAME = VTSDKDemo;
+            };
+            name = Release;
+        };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		666666666666666666666666 /* Build configuration list for PBXProject "VTSDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				888888888888888888888888 /* Debug */,
+				999999999999999999999999 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		777777777777777777777777 /* Build configuration list for PBXNativeTarget "VTSDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAAABBBBCCCCDDDDEEEEFFFF /* Debug */,
+				000011112222333344445555 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+        DDDDDDDDDDDDDDDDDDDDDDDD /* Build configuration list for PBXNativeTarget "VTSDKDemoUITests" */ = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                EEEEEEEEEEEEEEEEEEEEEEEE /* Debug */,
+                FFFFFFFFFFFFFFFFFFFFFFFF /* Release */,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+/* End XCConfigurationList section */
+	};
+	rootObject = 1E1C9A1A2B3C4D5E6F708090 /* Project object */;
+}

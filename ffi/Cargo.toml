@@ -1,0 +1,31 @@
+[package]
+name = "vt-sdk-ffi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "vt_sdk_ffi"
+crate-type = ["cdylib", "staticlib"]
+path = "src/lib.rs"
+
+[features]
+default = ["real"]
+real = ["dep:core"]
+mock = ["dep:mock"]
+
+[dependencies]
+# Use dependency aliases so code can reference `core::compare` and `mock::compare`
+core = { package = "vt-sdk-core", path = "../core", optional = true }
+mock = { package = "vt-sdk-mock", path = "../mock", optional = true }
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+
+[build-dependencies]
+cbindgen = "0.26"
+
+[package.metadata.cbindgen]
+language = "C"
+include_guard = "VT_SDK_H"
+include_version = true
+documentation = false
+output = "include/vt_sdk.h"

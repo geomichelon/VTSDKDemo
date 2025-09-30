@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  // Run Clippy on save for richer diagnostics
+  "rust-analyzer.checkOnSave.command": "clippy",
+  // Default to building the FFI with the real implementation
+  "rust-analyzer.cargo.features": [
+    "real"
+  ],
+  "rust-analyzer.cargo.allFeatures": false,
+  "rust-analyzer.showUnlinkedFileNotification": false,
+  "rust-analyzer.procMacro.enable": true,
+  // Run build.rs to discover OUT_DIR changes (needed for some crates)
+  "rust-analyzer.cargo.loadOutDirsFromCheck": true
+}
