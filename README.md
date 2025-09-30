@@ -49,6 +49,16 @@ Typical outputs (macOS/Linux):
 3) For mock: add `--no-default-features --features mock`.
 4) Link `libvt_sdk_ffi.so` into the app and load via `System.loadLibrary("vt_sdk_ffi")`.
 
+### Android Package (AAR)
+
+Prefer using the published AAR from GitHub Packages over copying `.so` manually.
+
+- Coordinates: `com.geomichelon:vt-sdk-android:<version>` (version follows repo tags).
+- Setup the GitHub Packages repository and credentials in Gradle, then add the dependency.
+- Kotlin wrapper entry point: `com.geomichelon.vtsdk.VtSdkFFI.vtCompareImages(...)` returns JSON.
+
+See docs/ANDROID_PACKAGE.md for complete setup and code examples.
+
 ## iOS
 
 The `ffi` crate builds `staticlib` and `cdylib`. For iOS, use the static (`.a`). Common targets:

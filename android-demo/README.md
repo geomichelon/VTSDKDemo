@@ -91,6 +91,13 @@ Run: `./gradlew connectedDebugAndroidTest` (requires emulator/device).
 - Workflow: `.github/workflows/build-android-so.yml`
   - Only builds and uploads the `.so` libraries + `vt_sdk.h` as artifacts.
 
+## Consume as Android Package (AAR)
+
+Prefer consuming as a Gradle dependency from GitHub Packages. See docs/ANDROID_PACKAGE.md for:
+- Maven coordinates (`com.geomichelon:vt-sdk-android:<version>`)
+- Repository credentials setup
+- Code usage via `com.geomichelon.vtsdk.VtSdkFFI`
+
 ## Troubleshooting
 
 - `UnsatisfiedLinkError`: ensure `.so` is present under `jniLibs/<ABI>/` and ABI matches device.
