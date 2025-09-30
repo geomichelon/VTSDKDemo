@@ -1,0 +1,36 @@
+name: coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  llvm-cov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
+      - name: Run coverage with threshold
+        run: |
+          set -euxo pipefail
+          cargo llvm-cov --package vt-sdk-core --fail-under-lines 80 --lcov --output-path lcov.info
+          echo "Coverage OK (>= 80%)."
+
+      - name: Upload lcov artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-lcov
+          path: lcov.info
+

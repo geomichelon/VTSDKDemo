@@ -158,3 +158,172 @@ fn nano_ts() -> u128 {
     use std::time::{SystemTime, UNIX_EPOCH};
     SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use image::{ImageBuffer, Rgb};
+    use std::path::PathBuf;
+
+    fn write_png(path: &str, img: &ImageBuffer<Rgb<u8>, Vec<u8>>) {
+        img.save(path).expect("failed to save test png");
+    }
+
+    fn tmp(file: &str) -> String {
+        let mut p = std::env::temp_dir();
+        p.push(format!("vt_test_{}_{}", file, nano_ts()));
+        p.set_extension("png");
+        p.to_string_lossy().to_string()
+    }
+
+    fn solid_rgb(w: u32, h: u32, rgb: [u8; 3]) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
+        ImageBuffer::from_fn(w, h, |_x, _y| Rgb(rgb))
+    }
+
+    #[test]
+    fn identical_images_give_100() {
+        let w = 256;
+        let h = 256;
+        let a = solid_rgb(w, h, [200, 200, 200]);
+        let b = a.clone();
+        let pa = tmp("ident_a");
+        let pb = tmp("ident_b");
+        write_png(&pa, &a);
+        write_png(&pb, &b);
+
+        let req = CompareRequest {
+            baseline_image: pa,
+            input_image: pb,
+            min_similarity: None,
+            noise_filter: None,
+            excluded_areas: None,
+            meta: Default::default(),
+        };
+        let res = compare_images(req);
+        assert!((res.obtained_similarity - 100.0).abs() < 0.001, "got {}", res.obtained_similarity);
+    }
+
+    #[test]
+    fn different_images_lower_similarity() {
+        let w = 256;
+        let h = 256;
+        let mut a = solid_rgb(w, h, [255, 255, 255]);
+        let mut b = solid_rgb(w, h, [255, 255, 255]);
+        // Put a black square in B
+        for y in 80..176 { for x in 80..176 { b.put_pixel(x, y, Rgb([0, 0, 0])); } }
+        let pa = tmp("diff_a");
+        let pb = tmp("diff_b");
+        write_png(&pa, &a);
+        write_png(&pb, &b);
+
+        let req = CompareRequest {
+            baseline_image: pa,
+            input_image: pb,
+            min_similarity: None,
+            noise_filter: None,
+            excluded_areas: None,
+            meta: Default::default(),
+        };
+        let res = compare_images(req);
+        assert!(res.obtained_similarity < 95.0, "unexpected high similarity: {}", res.obtained_similarity);
+    }
+
+    #[test]
+    fn excluded_area_ignores_difference() {
+        let w = 256;
+        let h = 256;
+        let a = solid_rgb(w, h, [255, 255, 255]);
+        let mut b = solid_rgb(w, h, [255, 255, 255]);
+        // Difference only in a central square 80..176
+        for y in 80..176 { for x in 80..176 { b.put_pixel(x, y, Rgb([0, 0, 0])); } }
+        let pa = tmp("ex_a");
+        let pb = tmp("ex_b");
+        write_png(&pa, &a);
+        write_png(&pb, &b);
+
+        // Exclude exactly that region (in original coordinates)
+        let rect = crate::filters::Rect {
+            top_left_x: 80,
+            top_left_y: 80,
+            bottom_right_x: 175,
+            bottom_right_y: 175,
+        };
+
+        let req = CompareRequest {
+            baseline_image: pa,
+            input_image: pb,
+            min_similarity: None,
+            noise_filter: None,
+            excluded_areas: Some(vec![rect]),
+            meta: Default::default(),
+        };
+        let res = compare_images(req);
+        assert!(res.obtained_similarity > 99.9, "expected near 100, got {}", res.obtained_similarity);
+    }
+
+    #[test]
+    fn min_similarity_sets_status() {
+        let w = 128;
+        let h = 128;
+        let a = solid_rgb(w, h, [255, 255, 255]);
+        let mut b = solid_rgb(w, h, [255, 255, 255]);
+        // small difference
+        for y in 40..88 { for x in 40..88 { b.put_pixel(x, y, Rgb([0, 0, 0])); } }
+        let pa = tmp("thr_a");
+        let pb = tmp("thr_b");
+        write_png(&pa, &a);
+        write_png(&pb, &b);
+
+        // Set a high threshold to force Failed
+        let req = CompareRequest {
+            baseline_image: pa,
+            input_image: pb,
+            min_similarity: Some(99),
+            noise_filter: None,
+            excluded_areas: None,
+            meta: Default::default(),
+        };
+        let res = compare_images(req);
+        assert!(matches!(res.status, Some(CompareStatus::Failed)));
+    }
+
+    #[test]
+    fn result_image_ref_created_when_images_load() {
+        let w = 64;
+        let h = 64;
+        let a = solid_rgb(w, h, [10, 20, 30]);
+        let b = solid_rgb(w, h, [11, 21, 31]);
+        let pa = tmp("diff_ref_a");
+        let pb = tmp("diff_ref_b");
+        write_png(&pa, &a);
+        write_png(&pb, &b);
+
+        let req = CompareRequest {
+            baseline_image: pa,
+            input_image: pb,
+            min_similarity: None,
+            noise_filter: None,
+            excluded_areas: None,
+            meta: Default::default(),
+        };
+        let res = compare_images(req);
+        let path = res.result_image_ref.expect("expected diff path");
+        assert!(std::path::Path::new(&path).exists(), "diff image not found at {path}");
+    }
+
+    #[test]
+    fn fallback_byte_similarity_for_invalid_paths() {
+        let req = CompareRequest {
+            baseline_image: "/path/does/not/exist/a.png".into(),
+            input_image: "/path/does/not/exist/b.png".into(),
+            min_similarity: Some(1),
+            noise_filter: None,
+            excluded_areas: None,
+            meta: Default::default(),
+        };
+        let res = compare_images(req);
+        assert!(res.obtained_similarity <= 1.0);
+        assert!(res.result_image_ref.is_none());
+        assert!(matches!(res.status, Some(CompareStatus::Failed)));
+    }
+}

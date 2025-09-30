@@ -46,3 +46,22 @@ pub fn flex_search(_req: SearchRequest) -> SearchResult {
         center: None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn search_stub_not_found() {
+        let req = SearchRequest {
+            parent_image: "parent.png".into(),
+            child_image: "child.png".into(),
+            meta: Meta::default(),
+        };
+        let res = flex_search(req);
+        assert_eq!(res.status, "NotFound");
+        assert_eq!(res.total_matches, 0);
+        assert!(res.matches.is_empty());
+        assert!(res.result_image_ref.is_none());
+    }
+}

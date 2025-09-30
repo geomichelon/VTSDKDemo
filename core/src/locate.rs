@@ -53,3 +53,23 @@ pub fn flex_locate(_req: LocateRequest) -> LocateResult {
         result_image_ref: None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn locate_stub_not_found() {
+        let req = LocateRequest {
+            container_image: "container.png".into(),
+            main_image: "main.png".into(),
+            relative_image: "relative.png".into(),
+            meta: Meta::default(),
+        };
+        let res = flex_locate(req);
+        assert_eq!(res.status, "NotFound");
+        assert!(res.main_region.is_none());
+        assert!(res.relative_region.is_none());
+        assert!(res.relative_position_from_main.is_none());
+    }
+}
