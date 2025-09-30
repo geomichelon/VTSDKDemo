@@ -1,0 +1,75 @@
+name: spm-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g., 0.2.0)"
+        required: true
+
+jobs:
+  release:
+    runs-on: macos-13
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Add iOS targets
+        run: rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
+
+      - name: Build FFI for iOS
+        run: |
+          set -euxo pipefail
+          cargo build -p vt-sdk-ffi --release --target aarch64-apple-ios
+          cargo build -p vt-sdk-ffi --release --target aarch64-apple-ios-sim
+          cargo build -p vt-sdk-ffi --release --target x86_64-apple-ios
+
+      - name: Create XCFramework
+        run: |
+          set -euxo pipefail
+          mkdir -p dist
+          lipo -create -output dist/libvt_sdk_ffi_sim.a \
+            target/aarch64-apple-ios-sim/release/libvt_sdk_ffi.a \
+            target/x86_64-apple-ios/release/libvt_sdk_ffi.a
+          xcodebuild -create-xcframework \
+            -library target/aarch64-apple-ios/release/libvt_sdk_ffi.a -headers ffi/include \
+            -library dist/libvt_sdk_ffi_sim.a -headers ffi/include \
+            -output dist/VTSDK.xcframework
+          (cd dist && zip -r VTSDK.xcframework.zip VTSDK.xcframework)
+
+      - name: Compute checksum
+        id: checksum
+        run: |
+          set -euxo pipefail
+          CS=$(swift package compute-checksum dist/VTSDK.xcframework.zip)
+          echo "checksum=$CS" >> $GITHUB_OUTPUT
+
+      - name: Update Package.swift with URL and checksum
+        run: |
+          set -euxo pipefail
+          V=${{ github.event.inputs.version }}
+          URL="https://github.com/${{ github.repository }}/releases/download/v${V}/VTSDK.xcframework.zip"
+          CS="${{ steps.checksum.outputs.checksum }}"
+          sed -i '' -e "s#https://github.com.*/VTSDK.xcframework.zip#${URL}#" -e "s#CHECKSUM_PLACEHOLDER#${CS}#" Package.swift
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add Package.swift
+          git commit -m "chore(spm): update Package.swift for v${V} (checksum ${CS})"
+          git push
+
+      - name: Create tag and release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          files: |
+            dist/VTSDK.xcframework.zip
+          generate_release_notes: true
+
