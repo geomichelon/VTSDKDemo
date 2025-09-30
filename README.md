@@ -57,6 +57,19 @@ Example (adjust to your toolchain):
 
 To produce an XCFramework, combine device + simulator outputs.
 
+## Swift Package Manager (Binary)
+
+Preferred integration for iOS apps is via SPM binaryTarget:
+
+- The CI publishes `VTSDK.xcframework.zip` on tagged releases (vX.Y.Z) and updates `Package.swift` with the correct URL and checksum.
+- In Xcode: File → Add Packages… → enter this repo URL → pick a release tag.
+- Xcode will download the XCFramework and link it; headers are included inside the XCFramework.
+
+Local development option:
+
+- You can drag `dist/VTSDK.xcframework` into your project or use a path‑based binary target during local dev.
+- See docs/SPM.md for details and the automated release flow.
+
 ## FFI API
 
 Exposed functions (C ABI), see header `ffi/include/vt_sdk.h`:

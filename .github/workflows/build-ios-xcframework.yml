@@ -91,6 +91,30 @@ jobs:
           name: VTSDK.xcframework
           path: dist
 
+      - name: Compute SPM checksum
+        id: checksum
+        run: |
+          set -euxo pipefail
+          swift --version
+          swift package compute-checksum dist/VTSDK.xcframework.zip > checksum.txt
+          CS=$(cat checksum.txt)
+          echo "checksum=$CS" >> $GITHUB_OUTPUT
+
+      - name: Update Package.swift (URL + checksum)
+        run: |
+          set -euxo pipefail
+          V="${GITHUB_REF#refs/tags/v}"
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${V}/VTSDK.xcframework.zip"
+          CS="${{ steps.checksum.outputs.checksum }}"
+          # Update URL and checksum in Package.swift
+          sed -i '' -e "s#https://github.com.*/VTSDK.xcframework.zip#${URL}#" Package.swift
+          sed -i '' -e "s#checksum: \".*\"#checksum: \"${CS}\"#" Package.swift
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add Package.swift || true
+          git commit -m "chore(spm): update Package.swift for v${V} (checksum ${CS})" || echo "No changes"
+          git push || true
+
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:

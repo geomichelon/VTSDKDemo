@@ -4,10 +4,16 @@ SwiftUI sample app that consumes the SDK via FFI using the `VTSDK.xcframework` i
 
 ## How to open and run
 
-1) Generate the XCFramework: `dist/VTSDK.xcframework`.
+Preferred (via SPM):
+- In Xcode, File → Add Packages… → enter the repo URL and choose a tag (vX.Y.Z). CI keeps the URL/checksum updated in `Package.swift` on each release.
+- Add the `VTSDK` product to the `VTSDKDemo` target.
+- Build/run on a simulator or device.
+
+Local/manual (fallback):
+1) Generate the XCFramework locally: `dist/VTSDK.xcframework`.
 2) Open `ios-demo/VTSDKDemo.xcodeproj` in Xcode.
-3) Select your `Team` under the `VTSDKDemo` target (Signing & Capabilities).
-4) Select a simulator or device and build/run.
+3) Add `VTSDK.xcframework` to “Frameworks, Libraries, and Embedded Content” (Do Not Embed for static).
+4) Select your `Team` under the `VTSDKDemo` target (Signing & Capabilities) and run.
 
 The "Run FFI" button calls `vt_compare_images` and shows the returned JSON.
 
